@@ -9,6 +9,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.reader.TextReader;
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -147,8 +148,18 @@ public class EmbeddingTests {
     }
 
     @Test
+    public void testPdfReader() {
+        var reader = new PagePdfDocumentReader("classpath:/인공지능_시대의_예술.pdf");
+        var documents = reader.read();
+        var splitter = new TokenTextSplitter();
+        var splitted = splitter.split(documents);
+        vectorStore.write(splitted);
+    }
+
+    @Test
     public void testSimilarityOption() {
-        String question = "주인공 김첨지는 어떤 일을 하는 사람인가요?";
+        //String question = "주인공 김첨지는 어떤 일을 하는 사람인가요?";
+        String question = "인공지능을 사용하면 일반 사람들도 예술가가 될 수 있을까?";
 
         var request = SearchRequest.builder()
                 .query(question)
